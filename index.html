@@ -199,7 +199,7 @@
       const loaderId = addLoader();
 
       try {
-        const res = await fetch(`https://rianshope.vercel.app/ai/asisten?userId=${userId}&text=${encodeURIComponent(text)}`);
+        const res = await fetch(`https://rianshope.vercel.app/ai/luminai?text=${encodeURIComponent(text)}`);
         const data = await res.json();
 
         removeLoader(loaderId);
