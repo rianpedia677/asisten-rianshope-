@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f7f7f8;
+      background: linear-gradient(145deg, #e3f2fd, #f7f7f8);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -40,25 +40,48 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 20px;
     }
 
     .chat-message {
-      max-width: 80%;
-      padding: 10px 15px;
-      border-radius: 10px;
-      line-height: 1.5;
-      white-space: pre-wrap;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      position: relative;
+      animation: fadeIn 0.3s ease-in;
     }
 
-    .user {
-      align-self: flex-end;
+    .chat-message.user {
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      font-size: 20px;
+      margin: 0 5px;
+    }
+
+    .bubble {
+      padding: 10px 15px;
+      border-radius: 12px;
+      background: inherit;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+
+    .user .bubble {
       background: #dcf8c6;
     }
 
-    .ai {
-      align-self: flex-start;
+    .ai .bubble {
       background: #f1f1f1;
+    }
+
+    .timestamp {
+      font-size: 12px;
+      color: gray;
+      position: absolute;
+      bottom: -16px;
+      right: 10px;
     }
 
     .chat-input {
@@ -89,6 +112,11 @@
     .chat-input button:hover {
       background: #357abd;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -102,7 +130,7 @@
   </div>
 
   <script>
-    const userId = `user-${Math.floor(Math.random() * 1000000)}`; // ID unik
+    const userId = `user-${Math.floor(Math.random() * 1000000)}`;
 
     async function sendMessage() {
       const input = document.getElementById("message");
@@ -112,21 +140,45 @@
       addMessage(text, "user");
       input.value = "";
 
+      // Tampilkan pesan loading
+      addMessage("Sedang mengetik...", "ai");
+
       try {
         const res = await fetch(`https://rianshope.vercel.app/ai/asisten?userId=${userId}&text=${encodeURIComponent(text)}`);
         const data = await res.json();
-        addMessage(data.result, "ai");
+
+        // Ganti pesan loading dengan balasan asli
+        const loadingMsg = document.querySelector(".chat-message.ai:last-child .bubble");
+        if (loadingMsg) loadingMsg.innerText = data.result;
       } catch (err) {
-        addMessage("Maaf, ada masalah teknis. Coba lagi nanti!", "ai");
+        const loadingMsg = document.querySelector(".chat-message.ai:last-child .bubble");
+        if (loadingMsg) loadingMsg.innerText = "Maaf, ada masalah teknis. Coba lagi nanti!";
       }
     }
 
     function addMessage(text, sender) {
       const chat = document.getElementById("chat");
-      const msg = document.createElement("div");
-      msg.className = `chat-message ${sender}`;
-      msg.innerText = text;
-      chat.appendChild(msg);
+
+      const msgContainer = document.createElement("div");
+      msgContainer.className = `chat-message ${sender}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = sender === "user" ? "🧑" : "🤖";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerText = text;
+
+      const time = document.createElement("div");
+      time.className = "timestamp";
+      time.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      msgContainer.appendChild(avatar);
+      msgContainer.appendChild(bubble);
+      msgContainer.appendChild(time);
+
+      chat.appendChild(msgContainer);
       chat.scrollTop = chat.scrollHeight;
     }
   </script>
