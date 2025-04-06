@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat AI Rianshope</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+    }
+
+    .chat-header {
+      background: #4a90e2;
+      color: white;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-message {
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #dcf8c6;
+    }
+
+    .ai {
+      align-self: flex-start;
+      background: #f1f1f1;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+
+    .chat-input button {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .chat-input button:hover {
+      background: #357abd;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Chat AI Rianshope</div>
+    <div class="chat-box" id="chat"></div>
+    <div class="chat-input">
+      <input type="text" id="message" placeholder="Tulis pesan..." />
+      <button onclick="sendMessage()">Kirim</button>
+    </div>
+  </div>
+
+  <script>
+    const userId = `user-${Math.floor(Math.random() * 1000000)}`; // ID unik
+
+    async function sendMessage() {
+      const input = document.getElementById("message");
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      try {
+        const res = await fetch(`https://rianshope.vercel.app/ai/asisten?userId=${userId}&text=${encodeURIComponent(text)}`);
+        const data = await res.json();
+        addMessage(data.result, "ai");
+      } catch (err) {
+        addMessage("Maaf, ada masalah teknis. Coba lagi nanti!", "ai");
+      }
+    }
+
+    function addMessage(text, sender) {
+      const chat = document.getElementById("chat");
+      const msg = document.createElement("div");
+      msg.className = `chat-message ${sender}`;
+      msg.innerText = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
