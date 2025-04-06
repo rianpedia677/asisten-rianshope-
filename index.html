@@ -6,26 +6,20 @@
   <title>Chat AI Rianshope</title>
   <style>
     html, body {
-      height: 100%;
       margin: 0;
       padding: 0;
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(145deg, #e3f2fd, #f7f7f8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     .chat-container {
-      width: 100%;
-      max-width: 600px;
-      height: 95vh;
       display: flex;
       flex-direction: column;
-      background: #fff;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      overflow: hidden;
+      height: 100vh;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
     }
 
     .chat-header {
@@ -34,6 +28,7 @@
       padding: 15px;
       font-size: 18px;
       font-weight: bold;
+      text-align: center;
     }
 
     .chat-box {
@@ -43,6 +38,7 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
+      background: #ffffff;
     }
 
     .chat-message {
@@ -65,7 +61,7 @@
       padding: 10px 15px;
       border-radius: 12px;
       background: inherit;
-      max-width: 75%;
+      max-width: 80%;
       word-wrap: break-word;
     }
 
@@ -77,18 +73,11 @@
       background: #f1f1f1;
     }
 
-    .timestamp {
-      font-size: 12px;
-      color: gray;
-      position: absolute;
-      bottom: -16px;
-      right: 10px;
-    }
-
     .chat-input {
       display: flex;
       padding: 10px;
       border-top: 1px solid #ddd;
+      background: #fff;
     }
 
     .chat-input input {
@@ -119,22 +108,14 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @media screen and (max-width: 600px) {
+    @media screen and (min-width: 768px) {
       .chat-container {
-        border-radius: 0;
-        height: 100vh;
-      }
-
-      .chat-box {
-        padding: 10px;
-      }
-
-      .chat-input input {
-        font-size: 14px;
-      }
-
-      .chat-input button {
-        font-size: 14px;
+        width: 100%;
+        max-width: 700px;
+        border-radius: 10px;
+        margin: auto;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
       }
     }
   </style>
@@ -150,7 +131,7 @@
   </div>
 
   <script>
-    const userId = `user-${Math.floor(Math.random() * 1000000)}`; // ID unik
+    const userId = `user-${Math.floor(Math.random() * 1000000)}`;
 
     async function sendMessage() {
       const input = document.getElementById("message");
@@ -165,7 +146,7 @@
         const data = await res.json();
         addMessage(data.result, "ai");
       } catch (err) {
-        addMessage("Maaf, ada masalah teknis. Coba lagi nanti!", "ai");
+        addMessage("Maaf, terjadi kesalahan. Silakan coba lagi nanti.", "ai");
       }
     }
 
