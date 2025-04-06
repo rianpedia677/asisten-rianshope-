@@ -2,247 +2,216 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat AI Rianshope</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to right top, #e3f2fd, #e8f5e9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f1f1f1;
       height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: 95vh;
-      width: 100%;
+      height: 100vh;
       max-width: 600px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
+      margin: auto;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     .chat-header {
-      background: #2196f3;
+      position: sticky;
+      top: 0;
+      background-color: #2196f3;
       color: white;
-      padding: 20px;
+      text-align: center;
+      padding: 12px;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: bold;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
+      z-index: 1;
     }
 
-    .chat-header::before {
-      content: "🤖";
-      font-size: 22px;
+    .chat-header img {
+      width: 20px;
+      height: 20px;
     }
 
-    .chat-box {
+    .chat-messages {
       flex: 1;
+      padding: 15px;
       overflow-y: auto;
-      padding: 20px;
+    }
+
+    .message {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
-      background: #f5f7fa;
-    }
-
-    .chat-message {
-      display: flex;
-      align-items: flex-end;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .chat-message.user {
-      justify-content: flex-end;
-    }
-
-    .bubble {
-      max-width: 75%;
-      padding: 12px 18px;
-      border-radius: 18px;
+      align-items: flex-start;
+      max-width: 80%;
+      margin-bottom: 15px;
+      padding: 10px 14px;
+      border-radius: 16px;
       font-size: 15px;
       line-height: 1.4;
-      background: #e0f7fa;
-      color: #333;
+      word-wrap: break-word;
     }
 
-    .chat-message.user .bubble {
-      background: #c8e6c9;
-      color: #222;
-      border-bottom-right-radius: 4px;
+    .ai-message {
+      background-color: #f0f0f0;
+      margin-right: auto;
     }
 
-    .chat-message.ai {
-      justify-content: flex-start;
-      gap: 10px;
+    .ai-message img {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
     }
 
-    .chat-message.ai .bubble {
-      background: #ffffff;
-      color: #333;
-      border-bottom-left-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    }
-
-    .ai-icon {
-      font-size: 20px;
-      margin-bottom: 4px;
+    .user-message {
+      background-color: #dcf8c6;
+      margin-left: auto;
     }
 
     .chat-input {
       display: flex;
-      padding: 16px;
+      padding: 8px;
+      border-top: 1px solid #ddd;
       background: #fff;
-      border-top: 1px solid #eee;
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
     }
 
     .chat-input input {
       flex: 1;
-      padding: 12px 16px;
-      font-size: 15px;
+      padding: 10px;
+      font-size: 16px;
       border: 1px solid #ccc;
-      border-radius: 10px;
-      margin-right: 10px;
+      border-radius: 20px;
     }
 
     .chat-input button {
-      background: #2196f3;
+      margin-left: 8px;
+      padding: 10px 18px;
+      background-color: #2196f3;
       color: white;
       border: none;
-      padding: 12px 20px;
-      font-size: 15px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.2s ease;
+      border-radius: 20px;
+      font-size: 14px;
     }
 
-    .chat-input button:hover {
-      background: #1976d2;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Loader */
-    .loader {
+    .chat-loader {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 3px;
+      gap: 5px;
+      margin-top: 5px;
     }
 
-    .loader span {
+    .dot {
       width: 6px;
       height: 6px;
-      background: #888;
+      background: #aaa;
       border-radius: 50%;
-      animation: blink 1.4s infinite;
+      animation: blink 1s infinite alternate;
     }
 
-    .loader span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .loader span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes blink {
-      0%, 80%, 100% { opacity: 0.2; transform: scale(1); }
-      40% { opacity: 1; transform: scale(1.4); }
+      from { opacity: 0.2; }
+      to { opacity: 1; }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 600px) {
       .chat-container {
-        height: 100vh;
         border-radius: 0;
+      }
+
+      .chat-header {
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      .chat-input input {
+        font-size: 14px;
+      }
+
+      .chat-input button {
+        padding: 8px 14px;
+        font-size: 13px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-header">Chat AI Rianshope</div>
-    <div class="chat-box" id="chat"></div>
-    <div class="chat-input">
-      <input type="text" id="message" placeholder="Tulis pesan..." />
-      <button onclick="sendMessage()">Kirim</button>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/chatbot.png" alt="AI Icon"/>
+    Chat AI Rianshope
+  </div>
+  <div class="chat-messages" id="chat">
+    <div class="message ai-message">
+      <img src="https://img.icons8.com/ios-filled/50/000000/chatbot.png"/>
+      <div>Halo! Selamat datang di Rianshope! Ada yang bisa saya bantu?</div>
     </div>
   </div>
+  <div class="chat-input">
+    <input type="text" placeholder="Tulis pesan..." id="userInput"/>
+    <button onclick="sendMessage()">Kirim</button>
+  </div>
+</div>
 
-  <script>
-    const userId = `user-${Math.floor(Math.random() * 1000000)}`;
+<script>
+  function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
 
-    async function sendMessage() {
-      const input = document.getElementById("message");
-      const text = input.value.trim();
-      if (!text) return;
+    const chat = document.getElementById('chat');
 
-      addMessage(text, "user");
-      input.value = "";
+    const userMsg = document.createElement('div');
+    userMsg.className = 'message user-message';
+    userMsg.textContent = text;
+    chat.appendChild(userMsg);
 
-      // Tampilkan loader
-      const loaderId = addLoader();
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
 
-      try {
-        const res = await fetch(`https://rianshope.vercel.app/ai/asisten?userId=${userId}&text=${encodeURIComponent(text)}`);
-        const data = await res.json();
+    const loader = document.createElement('div');
+    loader.className = 'message ai-message';
+    loader.innerHTML = `
+      <img src="https://img.icons8.com/ios-filled/50/000000/chatbot.png"/>
+      <div class="chat-loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    `;
+    chat.appendChild(loader);
+    chat.scrollTop = chat.scrollHeight;
 
-        removeLoader(loaderId);
-        addMessage(data.result, "ai");
-      } catch (err) {
-        removeLoader(loaderId);
-        addMessage("Maaf, terjadi kesalahan. Silakan coba lagi nanti.", "ai");
-      }
-    }
-
-    function addMessage(text, sender) {
-      const chat = document.getElementById("chat");
-      const msg = document.createElement("div");
-      msg.className = `chat-message ${sender}`;
-      msg.innerHTML = sender === "ai"
-        ? `<div class="ai-icon">🤖</div><div class="bubble">${text}</div>`
-        : `<div class="bubble">${text}</div>`;
-      chat.appendChild(msg);
+    setTimeout(() => {
+      loader.remove();
+      const aiReply = document.createElement('div');
+      aiReply.className = 'message ai-message';
+      aiReply.innerHTML = `
+        <img src="https://img.icons8.com/ios-filled/50/000000/chatbot.png"/>
+        <div>Ini balasan AI untuk pesan: "<strong>${text}</strong>"</div>
+      `;
+      chat.appendChild(aiReply);
       chat.scrollTop = chat.scrollHeight;
-    }
+    }, 1000);
+  }
+</script>
 
-    function addLoader() {
-      const chat = document.getElementById("chat");
-      const loaderId = "loader-" + Date.now();
-      const loader = document.createElement("div");
-      loader.className = "chat-message ai";
-      loader.id = loaderId;
-      loader.innerHTML = `
-        <div class="ai-icon">🤖</div>
-        <div class="bubble">
-          <div class="loader">
-            <span></span><span></span><span></span>
-          </div>
-        </div>`;
-      chat.appendChild(loader);
-      chat.scrollTop = chat.scrollHeight;
-      return loaderId;
-    }
-
-    function removeLoader(id) {
-      const loader = document.getElementById(id);
-      if (loader) loader.remove();
-    }
-  </script>
 </body>
 </html>
